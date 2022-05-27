@@ -36,7 +36,13 @@ defmodule Arbor.Tree do
     arbor_opts = Module.get_attribute(definition, :arbor_opts)
 
     {primary_key, primary_key_type, _} = Module.get_attribute(definition, :primary_key)
-    struct_fields = Module.get_attribute(definition, :struct_fields)
+    struct_fields =
+      if Module.has_attribute?(definition, :ecto_struct_fields) do
+        # Ecto >= 3.8
+        Module.get_attribute(definition, :ecto_struct_fields)
+      else
+        Module.get_attribute(definition, :struct_fields)
+      end
 
     struct_source = struct_fields[:__meta__].source
 
